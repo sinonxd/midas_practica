@@ -166,7 +166,7 @@ window.onclick = event => {
   if (event.target == modal) modal.style.display = "none";
 };
 
-// --- LÓGICA DE LA NUBE DE PALABRAS CON DEPURACIÓN ---
+// --- LÓGICA DE LA NUBE DE PALABRAS CON FILTRO DE SOLO LETRAS Y DEPURACIÓN ---
 document.getElementById("generateWordCloud").addEventListener("click", () => {
   const chartContainer = document.getElementById("word-cloud-chart-modal");
   chartContainer.innerHTML = "";
@@ -186,21 +186,28 @@ document.getElementById("generateWordCloud").addEventListener("click", () => {
   console.log("2. Mostrando los primeros 5 registros:", filteredData.slice(0, 5));
   // --- FIN MENSAJES DE DEPURACIÓN ---
 
+  // Función para validar que la palabra contenga solo letras (incluye letras acentuadas y ñ)
+  const isValidWord = word => /^[a-záéíóúñ]+$/i.test(word);
+
+  console.log("Ejemplos de criterio_texto de los primeros 5 registros:");
+  filteredData.slice(0, 5).forEach((d, i) => {
+    console.log(`Registro ${i + 1}:`, d.criterio_texto);
+  });
+
   filteredData.forEach(d => {
     if (d.criterio_texto) {
       // Divide el texto por cualquier caracter que no sea una letra, y filtra elementos vacíos.
-      const words = d.criterio_texto.toLowerCase().split(/[^a-záéíóúñ]+/).filter(Boolean);
-      if (words) {
-        words.forEach(word => {
-          // Filtro simplificado: solo contamos la palabra
+      const words = d.criterio_texto.toLowerCase().split(/\W+/).filter(Boolean);
+      words.forEach(word => {
+        if (isValidWord(word)) {
           wordCounts[word] = (wordCounts[word] || 0) + 1;
-        });
-      }
+        }
+      });
     }
   });
 
   // --- MENSAJES DE DEPURACIÓN ---
-  console.log("3. Conteo de palabras encontradas (antes de formatear):", wordCounts);
+  console.log("3. Conteo de palabras encontradas (filtradas solo letras):", wordCounts);
   // --- FIN MENSAJES DE DEPURACIÓN ---
 
   const wordData = Object.entries(wordCounts);

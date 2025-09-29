@@ -74,7 +74,7 @@ app.get('/api/data', async (req, res) => {
   const where = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
 
   const sql = `
-    SELECT fecha, tipo_busqueda
+    SELECT fecha, tipo_busqueda, criterio_texto
     FROM busquedas_clasificadas_v2
     ${where}
     ORDER BY fecha DESC;
