@@ -47,7 +47,7 @@ h1, h2 {
 
 .chart-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: repeat(2, 1fr); 
     gap: 20px;
     justify-items: center;
 }
@@ -132,4 +132,13 @@ h1, h2 {
   }
 }
 
+/* --- NUEVO: Estilos para la nube de palabras --- */
+#word-cloud-chart-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+#word-cloud-chart-modal canvas {
+    max-width: 100%;
+}

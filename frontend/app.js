@@ -16,10 +16,10 @@ const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const dayOrder = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const shortMonths = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-// Control de años y grupo de tipos para la nube de palabras
+// Variables globales para control de gráficos y datos
 let currentYearIndex = 0;
 let availableYears = [];
-let typesGroup; // Variable global para el grupo de tipos
+let ndx; // Instancia de Crossfilter para acceder a los datos filtrados
 
 function isValidDate(dateStr) {
   // Validar formato YYYY-MM-DD simple
@@ -37,7 +37,7 @@ async function loadDashboard(start, end) {
     document.getElementById("dow-chart").innerHTML = "";
     document.getElementById("types-chart").innerHTML = "";
 
-    // Procesar datos crudos, validando fechas
+    // Procesar datos crudos, validando fechas y añadiendo criterio_texto
     const data = (rawDataRes.data || [])
       .map(d => {
         const date = new Date(d.fecha);
@@ -47,7 +47,8 @@ async function loadDashboard(start, end) {
           year: date.getFullYear(),
           hour: date.getHours(),
           dow: dayNames[date.getDay()],
-          tipo_busqueda: (d.tipo_busqueda === null || d.tipo_busqueda === undefined || d.tipo_busqueda === '') ? 'sin informacion' : d.tipo_busqueda
+          tipo_busqueda: (d.tipo_busqueda === null || d.tipo_busqueda === undefined || d.tipo_busqueda === '') ? 'sin informacion' : d.tipo_busqueda,
+          criterio_texto: d.criterio_texto || '' // <-- AÑADIDO: Incluimos el criterio_texto
         };
       })
       .filter(d => d !== null);
@@ -58,7 +59,8 @@ async function loadDashboard(start, end) {
       return;
     }
 
-    const ndx = crossfilter(data);
+    // Hacemos la instancia de crossfilter accesible globalmente
+    ndx = crossfilter(data);
 
     const monthlyDim = ndx.dimension(d => d3.timeMonth.floor(d.date));
     const monthlyGroup = monthlyDim.group().reduceCount();
@@ -70,7 +72,7 @@ async function loadDashboard(start, end) {
     const dowGroup = dowDim.group().reduceCount();
 
     const typesDim = ndx.dimension(d => d.tipo_busqueda);
-    typesGroup = typesDim.group().reduceCount();
+    const typesGroup = typesDim.group().reduceCount();
 
     availableYears = [...new Set(data.map(d => d.year))].sort();
     currentYearIndex = 0;
@@ -118,7 +120,7 @@ async function loadDashboard(start, end) {
     const hourlyChart = dc.barChart("#hourly-chart");
     hourlyChart
       .width(500).height(250)
-      .margins({top: 10, right: 20, bottom: 30, left: 70}) // Margen izquierdo aumentado
+      .margins({top: 10, right: 20, bottom: 30, left: 70})
       .dimension(hourlyDim).group(hourlyGroup)
       .x(d3.scaleLinear().domain([0, 24]).rangeRound([0, 500]))
       .xUnits(dc.units.integers)
@@ -164,27 +166,63 @@ window.onclick = event => {
   if (event.target == modal) modal.style.display = "none";
 };
 
+// --- LÓGICA DE LA NUBE DE PALABRAS CON DEPURACIÓN ---
 document.getElementById("generateWordCloud").addEventListener("click", () => {
   const chartContainer = document.getElementById("word-cloud-chart-modal");
   chartContainer.innerHTML = "";
   modal.style.display = "block";
 
-  if (!typesGroup || typesGroup.size() === 0) {
-    chartContainer.innerHTML = "<p style='text-align: center; padding-top: 20px;'>No hay datos para mostrar. Aplica un filtro.</p>";
+  if (!ndx) {
+    chartContainer.innerHTML = "<p style='text-align: center; padding-top: 20px;'>No hay datos para mostrar. Aplica un filtro primero.</p>";
     return;
   }
-  const wordData = typesGroup.all().map(d => [d.key, d.value]).filter(d => d[0] && d[0] !== 'sin informacion');
-  if (wordData.length === 0) {
-    chartContainer.innerHTML = "<p style='text-align: center; padding-top: 20px;'>No hay palabras para mostrar en la nube.</p>";
-    return;
-  }
-  WordCloud(chartContainer, {
-    list: wordData,
-    gridSize: Math.round(16 * chartContainer.clientWidth / 1024),
-    weightFactor: size => Math.log(size + 1) * 6,
-    fontFamily: 'Arial, sans-serif', color: 'random-dark',
-    rotateRatio: 0.5, minSize: 10
+  
+  const wordCounts = {};
+  const filteredData = ndx.allFiltered();
+  
+  // --- MENSAJES DE DEPURACIÓN ---
+  console.log("--- INICIO DEPURACIÓN NUBE DE PALABRAS ---");
+  console.log("1. Total de registros filtrados por fecha:", filteredData.length);
+  console.log("2. Mostrando los primeros 5 registros:", filteredData.slice(0, 5));
+  // --- FIN MENSAJES DE DEPURACIÓN ---
+
+  filteredData.forEach(d => {
+    if (d.criterio_texto) {
+      // Divide el texto por cualquier caracter que no sea una letra, y filtra elementos vacíos.
+      const words = d.criterio_texto.toLowerCase().split(/[^a-záéíóúñ]+/).filter(Boolean);
+      if (words) {
+        words.forEach(word => {
+          // Filtro simplificado: solo contamos la palabra
+          wordCounts[word] = (wordCounts[word] || 0) + 1;
+        });
+      }
+    }
   });
+
+  // --- MENSAJES DE DEPURACIÓN ---
+  console.log("3. Conteo de palabras encontradas (antes de formatear):", wordCounts);
+  // --- FIN MENSAJES DE DEPURACIÓN ---
+
+  const wordData = Object.entries(wordCounts);
+
+  if (wordData.length === 0) {
+    chartContainer.innerHTML = "<p style='text-align: center; padding-top: 20px;'>No se encontraron palabras válidas en los criterios de búsqueda para el rango seleccionado.</p>";
+    return;
+  }
+
+  if (typeof WordCloud !== 'undefined') {
+    WordCloud(chartContainer, {
+      list: wordData,
+      gridSize: Math.round(16 * chartContainer.clientWidth / 1024),
+      weightFactor: size => Math.log(size + 1) * 6,
+      fontFamily: 'Arial, sans-serif',
+      color: 'random-dark',
+      rotateRatio: 0.5,
+      minSize: 10
+    });
+  } else {
+    chartContainer.innerHTML = "<p style='text-align: center; padding-top: 20px; color: red;'>Error: La librería WordCloud no está cargada.</p>";
+  }
 });
 
 loadDashboard();
