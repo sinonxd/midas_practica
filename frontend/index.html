@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard de Búsquedas</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- LIBRERÍAS CORREGIDAS -->
+  <!-- Se cambia D3.js a la versión 5, compatible con DC.js -->
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.4/dc.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.4/dc.min.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Dashboard de Búsquedas</h1>
+
+    <!-- Filtros de fecha -->
+    <div class="filters">
+      <label>Inicio: <input type="date" id="startDate"></label>
+      <label>Fin: <input type="date" id="endDate"></label>
+      <button id="applyFilters">Aplicar filtros</button>
+    </div>
+
+    <!-- Gráficas -->
+    <div id="charts">
+      <div class="chart">
+        <h2>Búsquedas por Mes</h2>
+        <div id="monthly-chart"></div>
+        <!-- Controles de año -->
+        <div class="chart-controls">
+          <button id="prevYear">⮜ Anterior</button>
+          <span id="yearLabel" style="font-weight:600; margin: 0 10px;">-</span>
+          <button id="nextYear">Siguiente ⮞</button>
+        </div>
+      </div>
+
+      <div class="chart">
+        <h2>Búsquedas por Hora</h2>
+        <div id="hourly-chart"></div>
+      </div>
+
+      <div class="chart">
+        <h2>Búsquedas por Día de la Semana</h2>
+        <div id="dow-chart"></div>
+      </div>
+
+      <div class="chart">
+        <h2>Búsquedas por Tipo</h2>
+        <div id="types-chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+

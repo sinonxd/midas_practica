@@ -1,0 +1,20 @@
+### 1) Monthly con rango de fechas
+GET http://localhost:3000/api/monthly?start=2025-01-01&end=2025-08-31
+Accept: application/json
+
+### 2) Hourly sin filtros
+GET http://localhost:3000/api/hourly
+Accept: application/json
+
+### 3) Day of week
+GET http://localhost:3000/api/dow
+Accept: application/json
+
+### 4) Types
+GET http://localhost:3000/api/types?start=2025-01-01&end=2025-12-31
+Accept: application/json
+
+### 5) Sample (últimos registros)
+GET http://localhost:3000/api/sample?limit=20
+Accept: application/json
+
