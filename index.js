@@ -15,7 +15,7 @@ const pool = new Pool({
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('frontend')); // Sirve los archivos del frontend
+app.use(express.static('frontend')); 
 
 // Normaliza fechas aceptando 'YYYY-MM-DD' o 'DD/MM/YYYY' (devuelve 'YYYY-MM-DD' o null)
 function normalizeDateParam(str) {
@@ -34,7 +34,6 @@ function normalizeDateParam(str) {
   return dt.toISOString().slice(0, 10);
 }
 
-// parseRange usa normalizeDateParam y devuelve start,end,tipo (start/end en ISO YYYY-MM-DD o null)
 function parseRange(req) {
   const startRaw = req.query.start || null;
   const endRaw = req.query.end || null;
@@ -42,7 +41,7 @@ function parseRange(req) {
   let end = normalizeDateParam(endRaw);
   const tipo = req.query.tipo || null;
 
-  // Si start > end, intercambiar para evitar consulta vacía
+  
   if (start && end && start > end) {
     const temp = start;
     start = end;
@@ -52,12 +51,10 @@ function parseRange(req) {
   return { start, end, tipo };
 }
 
-/* ... Resto de endpoints sin cambios ... */
 
-/* 6) Endpoint para datos crudos (para cross-filtering) */
 app.get('/api/data', async (req, res) => {
   const { start, end } = parseRange(req);
-  console.log("API /api/data - start:", start, "end:", end); // Log para depuración
+  console.log("API /api/data - start:", start, "end:", end); 
 
   const params = [];
   const conditions = [];

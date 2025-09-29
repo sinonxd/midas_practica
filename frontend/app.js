@@ -1,4 +1,4 @@
-// Establece la paleta de colores personalizada de azules
+// Establece la paleta de colores personalizada 
 dc.config.defaultColors(['#a9cce3', '#5dade2', '#2980b9', '#2471a3', '#1f618d', '#154360']);
 
 // La función fetchData
@@ -30,7 +30,7 @@ async function loadDashboard(start, end) {
   try {
     const rawDataRes = await fetchData("data", { start, end });
 
-    // Limpiamos gráficos anteriores y sus contenedores HTML
+    // Limpiar gráficos anteriores y sus contenedores HTML
     dc.chartRegistry.clear();
     document.getElementById("monthly-chart").innerHTML = "";
     document.getElementById("hourly-chart").innerHTML = "";
@@ -48,7 +48,7 @@ async function loadDashboard(start, end) {
           hour: date.getHours(),
           dow: dayNames[date.getDay()],
           tipo_busqueda: (d.tipo_busqueda === null || d.tipo_busqueda === undefined || d.tipo_busqueda === '') ? 'sin informacion' : d.tipo_busqueda,
-          criterio_texto: d.criterio_texto || '' // <-- AÑADIDO: Incluimos el criterio_texto
+          criterio_texto: d.criterio_texto || '' 
         };
       })
       .filter(d => d !== null);
@@ -59,7 +59,7 @@ async function loadDashboard(start, end) {
       return;
     }
 
-    // Hacemos la instancia de crossfilter accesible globalmente
+    // crossfilter accesible globalmente
     ndx = crossfilter(data);
 
     const monthlyDim = ndx.dimension(d => d3.timeMonth.floor(d.date));
@@ -180,11 +180,6 @@ document.getElementById("generateWordCloud").addEventListener("click", () => {
   const wordCounts = {};
   const filteredData = ndx.allFiltered();
   
-  // --- MENSAJES DE DEPURACIÓN ---
-  console.log("--- INICIO DEPURACIÓN NUBE DE PALABRAS ---");
-  console.log("1. Total de registros filtrados por fecha:", filteredData.length);
-  console.log("2. Mostrando los primeros 5 registros:", filteredData.slice(0, 5));
-  // --- FIN MENSAJES DE DEPURACIÓN ---
 
   // Función para validar que la palabra contenga solo letras (incluye letras acentuadas y ñ)
   const isValidWord = word => /^[a-záéíóúñ]+$/i.test(word);
@@ -206,9 +201,6 @@ document.getElementById("generateWordCloud").addEventListener("click", () => {
     }
   });
 
-  // --- MENSAJES DE DEPURACIÓN ---
-  console.log("3. Conteo de palabras encontradas (filtradas solo letras):", wordCounts);
-  // --- FIN MENSAJES DE DEPURACIÓN ---
 
   const wordData = Object.entries(wordCounts);
 
