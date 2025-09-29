@@ -6,32 +6,60 @@ body {
     color: #333;
 }
 
-h1, h2 {
+h1 {
     text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* --- Barra azul y títulos alineados --- */
+.chart-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
     color: #2c3e50;
 }
 
+.chart-title::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 20px;
+    margin-right: 10px;
+    background-color: #2980b9;
+    border-radius: 3px;
+}
+
+/* --- Contenedor de filtros --- */
 .filters {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-bottom: 25px;
+    margin: 0 auto 25px;
     padding: 15px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 1150px; /* mismo ancho que el grid */
 }
 
 .filters label {
     font-weight: bold;
 }
 
-.filters input[type="date"], .filters button {
+/* Inputs y botones del mismo tamaño */
+.filters input[type="date"],
+.filters button {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    height: 38px;       /* altura uniforme */
+    width: 200px;       /* ancho fijo */
+    box-sizing: border-box;
 }
 
 .filters button {
@@ -39,17 +67,22 @@ h1, h2 {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
+    border: none;
 }
 
 .filters button:hover {
     background-color: #2471a3;
 }
 
+/* --- Grid de gráficos --- */
 .chart-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr); 
-    gap: 20px;
-    justify-items: center;
+    grid-template-rows: repeat(2, auto);
+    gap: 30px 40px; /* más balanceado vertical/horizontal */
+    justify-content: center;
+    max-width: 1150px;
+    margin: 0 auto;
 }
 
 .chart-wrapper {
@@ -61,6 +94,7 @@ h1, h2 {
     max-width: 550px;
 }
 
+/* Botones de navegación año */
 .nav-button {
     display: inline-block;
     padding: 8px 15px;
@@ -79,29 +113,28 @@ h1, h2 {
 
 /* Estilos del Modal */
 .modal {
-  display: none; /* Oculto por defecto */
-  position: fixed; /* Se queda fijo en la pantalla */
-  z-index: 1000; /* Se asegura de que esté al frente */
+  display: none;
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto; /* Permite scroll si el contenido es muy grande */
-  background-color: rgba(0,0,0,0.5); /* Fondo negro semitransparente */
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 10% auto; /* 10% desde arriba y centrado horizontalmente */
+  margin: 10% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  max-width: 700px; /* Ancho máximo */
+  max-width: 700px;
   border-radius: 8px;
   position: relative;
 }
 
-/* Botón para cerrar (la 'x') */
 .close-button {
   color: #aaa;
   position: absolute;
@@ -114,25 +147,28 @@ h1, h2 {
 .close-button:hover,
 .close-button:focus {
   color: black;
-  text-decoration: none;
   cursor: pointer;
 }
 
-/* === Responsive === */
+/* Responsive */
 @media (max-width: 768px) {
   h1 {
     font-size: 1.7rem;
-  }
-  h2 {
-    font-size: 1.1rem;
   }
   .filters {
     flex-direction: column;
     gap: 10px;
   }
+  .filters input[type="date"],
+  .filters button {
+    width: 100%; /* en móvil ocupan todo el ancho */
+  }
+  .chart-container {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* --- NUEVO: Estilos para la nube de palabras --- */
+/* --- Nube de palabras --- */
 #word-cloud-chart-modal {
     display: flex;
     justify-content: center;
@@ -142,3 +178,5 @@ h1, h2 {
 #word-cloud-chart-modal canvas {
     max-width: 100%;
 }
+
+

@@ -10,6 +10,7 @@
 <body>
     <h1>📉 Dashboard de Búsquedas</h1>
 
+    <!-- Contenedor de filtros -->
     <div class="filters">
         <label for="startDate">Desde:</label>
         <input type="date" id="startDate">
@@ -19,28 +20,29 @@
         <button id="generateWordCloud">Generar Nube de Palabras</button>
     </div>
 
+    <!-- Grid de gráficos -->
     <div class="chart-container">
         <div class="chart-wrapper">
-            <h2>Búsquedas por Mes: <span id="yearLabel"></span></h2>
+            <div class="chart-title">Búsquedas por Mes: <span id="yearLabel"></span></div>
             <div id="monthly-chart"></div>
             <button id="prevYear" class="nav-button">Año Anterior</button>
             <button id="nextYear" class="nav-button">Año Siguiente</button>
         </div>
         <div class="chart-wrapper">
-            <h2>Búsquedas por Hora del Día</h2>
+            <div class="chart-title">Búsquedas por Hora del Día</div>
             <div id="hourly-chart"></div>
         </div>
         <div class="chart-wrapper">
-            <h2>Búsquedas por Día de la Semana</h2>
+            <div class="chart-title">Búsquedas por Día de la Semana</div>
             <div id="dow-chart"></div>
         </div>
         <div class="chart-wrapper">
-            <h2>Tipos de Búsqueda</h2>
+            <div class="chart-title">Tipos de Búsqueda</div>
             <div id="types-chart"></div>
         </div>
     </div>
 
-    <!-- El Modal para la Nube de Palabras -->
+    <!-- Modal Nube de Palabras -->
     <div id="wordCloudModal" class="modal">
       <div class="modal-content">
         <span class="close-button">&times;</span>
@@ -53,12 +55,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/3.2.1/dc.min.js"></script>
-    
-    <!-- Solución al error: Incluir la librería localmente -->
     <script src="wordcloud2.min.js"></script>
-
-    <!-- Tu script principal -->
     <script src="app.js"></script>
 </body>
 </html>
+
 
